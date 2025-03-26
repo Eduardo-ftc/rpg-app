@@ -10,6 +10,8 @@ const SYNC_HEADER = 'PERSONAGEM-SYNC';
 let socket = null;
 let isSync = false;
 
+
+//Inícia o servidor de sincronização usando o protocolo UDP
 const startSyncServer = (onNewData) => {
     socket = dgram.createSocket('udp4');
 
@@ -17,7 +19,8 @@ const startSyncServer = (onNewData) => {
         console.log('Servidor de sincronização iniciado', SYNC_PORT);
         socket.setBroadcast(true);
     });
-
+    
+    //Mensagens recebidas
     socket.on('message', async (msg, info) => {
         const message = msg.toString();
 
@@ -40,14 +43,14 @@ const startSyncServer = (onNewData) => {
         }
     });
 };
-
+//Para a sincronização
 const pararServer = () => {
     if(socket){
         socket.close();
         socket = null;
     }
 };
-
+//Envia os dados para sincronização
 const sendSyncData = (personagens) => {
     return new Promise((resolve, reject) => {
         if(!socket){
@@ -57,6 +60,7 @@ const sendSyncData = (personagens) => {
     const syncIds = personagens.map(p => p.id);
     const message = JSON.stringify({type: 'data', personagens, syncIds});
 
+        //Enviando dados via broadcast UDP
     socket.send(
         SYNC_HEADER + message,
         0,
@@ -76,6 +80,7 @@ const sendSyncData = (personagens) => {
     });
 };
 
+//Descobre e sincroniza os dados na rede wifi
 const acharEsincronizar = async () => {
     if(isSync){
         console.log('Sincronização em andamento, aguarde...');
@@ -90,6 +95,8 @@ const acharEsincronizar = async () => {
             throw new Error('Sem conexão wifi')
         };
         const message = JSON.stringify({type: 'request'});
+        
+        //Enviando requisição broadcast
         await new Promise((resolve, reject) => {
             socket.send(
                 SYNC_HEADER + message,
@@ -108,7 +115,7 @@ const acharEsincronizar = async () => {
 
         console.log('Sincronização iniciada');
         
-
+        //Obtém e envia personagens não sincronizados
         const unSync = await pegarPersonagemUnSync();
         let sentCount = 0;
 
