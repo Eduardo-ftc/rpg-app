@@ -13,18 +13,20 @@ const ListaPersonagemScreen = ({route, navigation}) => {
     const [carregar, setCarregar] = useState(false);
     const [atualizar, setAtualizar] = useState(false);
 
+
+    //Traz os personagens do banco de dados
     const carregarPersonagens = async () => {
         setAtualizar(true);
         try {
 
             const personagensLoaded = await pegarPersonagem(userId);
             console.log('Personagens carregados', personagensLoaded);
-            setPersonagens(personagensLoaded);
+            setPersonagens(personagensLoaded); //Atualiza o estado como os personagens
 
         } catch (error) {
             console.log('Erro ao carregar personagens', error);
         }finally{
-            setAtualizar(false);
+            setAtualizar(false); //Desativa a atualização
         }
     };
 
@@ -33,7 +35,7 @@ const ListaPersonagemScreen = ({route, navigation}) => {
         carregarPersonagens();
 
         const unsub = navigation.addListener('focus', carregarPersonagens);
-
+        //Inícia o servidor para sincronizar
         try{
             startSyncServer(novoPersonagemRecebido);
         }catch(error){
@@ -46,6 +48,7 @@ const ListaPersonagemScreen = ({route, navigation}) => {
         }
     }, [navigation, userId]);
 
+    //Callback para novos personagens recebidos
     const novoPersonagemRecebido = (novosPersonagem) =>{
         if(!Array.isArray(novosPersonagem)){
             console.error('Novos personagens recebidos não são válidos', novosPersonagem);
@@ -53,6 +56,7 @@ const ListaPersonagemScreen = ({route, navigation}) => {
         }
         console.log('Novos personagens recebidos', novosPersonagem);
 
+        //Filtra os personagens novos
         setNetworkPersonagens(prev => {
             const personagensUnicos = novosPersonagem.filter(newPerson => 
                 !prev.some(existingPerson => existingPerson.id === newPerson.id) &&
@@ -77,6 +81,7 @@ const ListaPersonagemScreen = ({route, navigation}) => {
         }
     }
 
+    //Aqui atualiza a lista dos personagens
     const botaoSincronizar = async () => {
         console.log('Botão sincrozinar pressionado');
         setSync(true);
