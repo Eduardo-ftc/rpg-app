@@ -4,6 +4,7 @@ import { salvarPersonagem } from '../services/database';
 
 const CriarPersonagemScreen = ({ route, navigation }) => {
     const {userId} = route.params;
+    //Armazena os dados do personagem
     const [personagem, setPersonagem] = useState({
         NOME: '',
         CLASSE: '',
@@ -17,7 +18,8 @@ const CriarPersonagemScreen = ({ route, navigation }) => {
             CARISMA: 0
         },
     });
-
+    
+    //Aqui salva os personagens
     const botaoSalvar = async() =>{
         try {
             if(!personagem.NOME.trim()){
