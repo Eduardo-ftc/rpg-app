@@ -9,6 +9,7 @@ const NetworkSyncScreen = () => {
     const [currentWifi, setCurrentWifi] = useState(null);
 
     useEffect(() => {
+        //Verifica a rede wifi atual
         const checkWifi = async () => {
             try {
                 const { ssid } = await wifi.getCurrentWifiSSID();
@@ -20,6 +21,7 @@ const NetworkSyncScreen = () => {
 
         checkWifi();
 
+        //Limpa o componente
         return() => {
             if(sync){
                 pararServer();
@@ -27,6 +29,7 @@ const NetworkSyncScreen = () => {
         };
     }, [sync]);
 
+    //Altera o estado da sincronização
     const toggleSync = async () => {
         if(sync){
             pararServer();
